@@ -1,0 +1,2036 @@
+﻿/********************************************************************************
+SAS User File for ATCPUF13 Data                                                                   
+                                                                                                    
+This file contains information and sample SAS programs to create a permanent                        
+SAS dataset for users who want to use SAS in processing the ATCPUF13 transport data file                              
+provided in this PUF release.                                                                       
+                                                                                                    
+Section A provides a sample SAS program to convert the SAS transport data file to a                             
+regular SAS dataset using the SAS procedure: CIMPORT.  
+
+Section B explains format-related SAS statements that a user may                       
+optionally use when working with the SAS dataset.    
+
+Section C explains label-related SAS statements that a user may                       
+optionally use when importing the csv file into SAS.                         
+                                                                                                    
+******************************************************************************/                      
+
+/*******************************************************************************                                                                                                                                                                                                                                  
+A. A Sample SAS Program for Converting the SAS Transport File to a                              
+Permanent SAS Dataset                                                                               
+*******************************************************************************/
+                                                                                                                                                                                                                                                                                                
+LIBNAME PUFLIB 'C:\MCBS\SASDATA';                                                               
+FILENAME F "C:\MCBS\DOWNLOAD\ATCPUF13.XPT";                                              
+
+PROC CIMPORT LIBRARY=PUFLIB INFILE=F;
+RUN;                                                                                                                                                                                                                                                                                                                                                                                        
+   
+/*******************************************************************************                                                                                                 
+The LIBNAME PUFLIB statement tells SAS the location (directory name) to store the                          
+permanent SAS dataset which is output by PROC CIMPORT.  The FILENAME F statement                        
+tells SAS the location (complete directory and file name) of the input SAS                          
+transport data file.                                                                                
+*******************************************************************************/
+                                                                                                                                                                                             
+/*********************************************************************************                                                                                              
+B. Optional Format-related SAS Statements                                                       
+                                                                                                    
+If a user wants to use formats for the SAS variables, a SAS format library                          
+must first be created.  Below is a SAS program that will accomplish this:                           
+*******************************************************************************/                                                                                                                                                      
+ 
+proc format LIBRARY=PUFLIB;
+
+value age2grp
+1='1:Age Group <65'
+2='2:Age Group [65,75)'
+3='3:Age Group >=75';
+
+value sex
+1='1:Male'
+2='2:Female';
+
+value race
+1='1:Non-Hispanic white'
+2='2:Non-Hispanic black'
+3='3:Hispanic'
+4='4:Other';
+
+value ivcore
+1='1:Non-Hispanic white, < 65 years' 
+2='2:Non-Hispanic white, 65-74 years' 
+3='3:Non-Hispanic white, 75-84 years' 
+4='4:Non-Hispanic white, 85+ years' 
+5='5:Non-Hispanic black, <65 years' 
+6='6:Non-Hispanic black, 65-74 years' 
+7='7:Non-Hispanic black, 75-84 years' 
+8='8:Non-Hispanic black, 85+ years' 
+9='9:Hispanic, <65 years' 
+10='10:Hispanic, 65-74 years' 
+11='11:Hispanic, 75+ years' 
+12='12:Other, <65 years' 
+13='13:Other, 65-74 years' 
+14='14:Other, 75+ years';
+
+value yesfmt
+1='1:Yes'
+2='2:No'
+.='Missing'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'
+-1='Inapplicable';
+
+value income 
+.='Missing'
+-7='-7:Refused'
+-8="-8:Don't know"
+1='1:<25000 $'
+2='2:>=25000 $';
+
+value edu
+.='Missing'
+1='1:Less than high school'
+2='2:High school or vocational, technical, business, etc' /*LM edit 12/30 and 4/8*/
+3='3:More than high school'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value marsta
+.='Missing'
+1='1:Married'
+2='2:Widowed'
+3='3:Divorced/separated'
+4='4:Never Married'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value genhfmt
+.='Missing'
+1='1:Excellent'
+2='2:Very good'
+3='3:Good'
+4='4:Fair'
+5='5:Poor'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value compfmt 
+.='Missing'
+1='1:Much Better'
+2='2:Somewhat better'
+3='3:About the same'
+4='4:Somewhat worse'
+5='5:Much Worse'
+-9='-9: Not ascertained'
+-8="-8: Don't know"
+-7='-7: Refused';
+
+value timefmt
+.='Missing'
+1='1:None of the time'
+2='2:Some of the time'
+3='3:Most of the time'
+4='4:All of the time'
+-7='-7:Refused' 
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value lookfmt
+.='Missing'
+1='1:No trouble seeing'
+2='2:A little trouble seeing'
+3='3:A lot of trouble seeing'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value lastfmt
+
+1='1:Never had an eye exam'
+2='2:1 year to less than 2 years'
+3='3:2 years to less than 5 years'
+4='4:5 years or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'
+.='Missing';
+
+value edofmt
+.='Missing'
+1='1:Optometrist'
+2='2:Ophthalmologist'
+91='91:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hcfmt
+.='Missing'
+1='1:No trouble' 
+2='2:A little trouble'
+3='3:A lot of trouble'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value bmifmt
+.='Missing'
+1='1:Underweight, <18.5'
+2='2:Healthy, 18.5-<25'
+3='3:Overweight, 25-<30'
+4='4:Obese, 30-<40'
+5='5:Extreme or high risk obesity, >=40';
+
+value time2fmt
+.='Missing'
+1='1:Less than 6 months ago'
+2='2:6 months to less than 1 year'
+3='3:1 year to less than 2 years'
+4='4: 2 years or more'
+5='5:Never taken' 
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value sitefmt
+.='Missing'
+1="1:Doctor's office/clinic or managed care center"
+2='2:Health center/clinic'
+3='3:Urgent care/Hospital related facility'
+4='4:V.A. facility'
+5='5:Shopping mall/other store'
+6='6:Other'
+7='7:No Flu Shot'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value difffmt
+.='Missing'
+1='1:No Difficulty'
+2='2:Little Difficulty'
+3='3:Some Difficulty'
+4='4:A lot of Difficulty'
+5='5:Unable to do it'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'; 
+                                       
+value diafmt
+.='Missing'
+1='1:Type 1: insulin dependent, juv-onset'
+2='2:Type 2: non-insulin depend, adult-onset'
+3='3:Borderline'
+4='4:Pre-diabetes'
+5='5:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value funlmtfmt
+.='Missing'
+0='0:No Functional Limitations'
+1='1:IADLs Only'
+2='2:1 to 2 ADLs'
+3='3:3 to 4 ADLs'
+4='4:5 to 6 ADLs';
+
+value adlhnm
+.='Missing'
+1='1:1 helper'
+2='2:2 helpers'
+3='3:3 helpers'
+4='4:4 or more helpers';
+
+value time3fmt
+.='Missing'
+1='1:All of the time'
+2='2:Most of the time'
+3='3:Some of the time'
+4='4:A little of the time'
+5='5:None of the time'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value felltimefmt
+.='Missing'
+1='1:Fell 1 time' 
+2='2:Fell 2 times' 
+3='3:Fell 3 times'
+4='4:Fell 4 times' 
+5='5:Fell 5 or more times'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'; 
+
+value time4fmt
+.='Missing'
+0='0:Never had blood cholesterol taken'
+1='1:Less than 6 months ago'
+2='2:6 months to 1 year ago'
+3='3:1 year to less than 2 years ago'
+4='4:2 years to less than 5 years ago'
+5='5:5 or more years ago'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hypetf 
+.='Missing'
+1="1:Yes"
+2="2:No"
+3="3:Never told. Prior entry in error"
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value smktime
+.='Missing'
+1='1:Less than 1 year'
+2='2:1 to 9 years'
+3='3:10 or more years'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value smktime2f
+.='Missing'
+1='1:Less than 1 year'
+2='2:1 to 4 years'
+3='3:5 to 9 years'
+4='4:10 or more years'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value smkquit  
+.='Missing'
+1='1:Yes' 
+2='2:No' 
+3='3:Never Smoke'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value drinkday
+.='Missing'
+0='0:None'
+1='1:One day a month'
+2='2:Two days a month'
+3='3:Three days a month'
+4='4:Four days a month'
+5='5:Five days a month'
+6='6:Six to ten days a month'
+7='7:Eleven to fifteen days a month'
+8='8:Sixteen to twenty days a month'
+9='9:Twenty-one to twenty-five days a month'
+10='10:Twenty-six days to every day'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value drinkspd 
+.='Missing'
+1='1:Less than one alcohol drink per day'
+2='2:One drink per day'
+3='3:Two drinks per day'
+4='4:More than two drinks per day'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value drink2day  
+.='Missing'
+0='0:None'
+1='1:One day a month'
+2='2:Two to five days a month'
+3='3:Six days a month to every day'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+                    
+value hracta
+.='Missing'
+0='0:None'
+1='1:One hour per week'
+2='2:Two hours per week'
+3='3:Three hours per week'
+4='4:Four hours per week'
+5='5:Five hours per week'
+6='6:Six hours per week'
+7='7:Seven hours per week' 
+8='8:Eight to thirteen hours per week'
+9='9:Fourteen hours per week'
+10='10:Fifteen to twenty five hours per week'
+11='11:Twenty six or more hours per week'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hractb
+.='Missing'
+0='0:None'
+1='1:One hour per week'
+2='2:Two hours per week'
+3='3:Three hours per week'
+4='4:Four hours per week'
+5='5:Five hours per week'
+6='6:Six hours per week'
+7='7:Seven hours per week'
+8='8:Eight to nine hours per week'
+9='9:Ten hours per week'
+10='10:Eleven to thirteen' 
+11='11:Fourteen hours per week'
+12='12:Fifteen hours per week'
+13='13:Sixteen to twenty hours per week' 
+14='14:Twenty one to twenty five hours per week'
+15='15:Twenty five to thirty hours per week'
+16='16:Thirty one or more hours per week'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hractc
+.='Missing'
+0='0:None'
+1='1:One hour per week'
+2='2:Two hours per week'
+3='3:Three hours per week'
+4='4:Four hours per week'
+5='5:Five hours per week'
+6='6:Six hours per week'
+7='7:Seven hours per week' 
+8='8:Eight or more hours per week'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hkitfmt
+.='Missing'
+1='1:Yes'
+2='2:No' 
+3='3:Never given home kit to COLHKIT'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value colrecnt
+.='Missing'
+0='0:No test done'
+1='1:Less than 1 year ago'
+2='2:Between 1-2 years ago'
+3='3:Between 2-3 years ago'
+4='4:Between 3-5 years ago'
+5='5:5 or more years ago'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value whenscop 
+.='Missing'
+0='0:No colonoscopy or sigmiodoscopy'
+1='1:Less than 1 year ago'
+2='2:Between 1-2 years ago'
+3='3:Between 2-3 years ago'
+4='4:Between 3-5 years ago'
+5='5:5 or more years ago'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value time5fmt
+.='Missing'
+1='1:Less than 5 years ago'
+2='2:5 to 9 years ago'
+3='3:10 or more years ago';
+
+value time6fmt
+.='Missing'
+1='1:Less than 1 year'
+2='2:1 to 4 years'
+3='3:5 to 9 years'
+4='4:10 to 14 years'
+5='5:15 to 19 years'
+6='6:20 to 29 years'
+7='7:30 or more years'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hypefmt
+.='Missing'
+1='1:One med'
+2='2:Two meds'
+3='3:Three or more meds'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ctrlfmt
+.='Missing'
+1='1:Very confident'
+2='2:Confident'
+3='3:Somewhat confident'
+4='4:Not confident'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+                 
+value time7fmt
+.='Missing'
+1='1:Less than 1 week'
+2='2:More than 1 week'
+3='3:Never resumed regular activities'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value fallscale
+.='Missing'
+1='1:Not at all afraid of falling'
+2='2:A little afraid of falling'
+3='3:Moderately afraid of falling'
+4='4:Afraid of falling'
+5='5:Very afraid of falling'
+6='6:Extremely afraid of falling'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+         
+value apptfmt
+.='Missing'
+1='1:Appointment' 
+2='2:Walked in'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value opdtelfmt
+.='Missing'
+1='1:Told to come back during a prior visit' 
+2='2:Called for an appointment'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value appttime
+.='Missing'
+0="0:Didn't have wait"
+1='1:1 to 3 days'
+2='2:4 to 9 days'
+3='3:10 or more days'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value opttime
+.='Missing'
+1='1: Up to one hour' 
+2='2: More than one hour'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+
+value mdfmt
+.='Missing'
+1='1:Primary Care'
+2='2:Obstetrics/Gynecology'
+3='3:Ophthalmology'
+4='4:Orthopedics'
+5='5:Psychiatry'
+6='6:Cardiology'
+7='7:Dermatology'
+8='8:Urology'
+9='9:Surgery'
+10='10:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value appt2time
+.='Missing'
+0="0:Didn't have wait"
+1='1:1 to 3 days'
+2='2:4 to 6 days'
+3='3:7 to 9 days'
+4='4:10 to 20 days'
+5='5:21 days or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value mdtime
+.='Missing'
+1='1:0 - 60 mins'
+2='2:61 - 120 mins'
+3='3:121 mins or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value satffmt
+.='Missing'
+1='1:Very Satisfied'
+2='2:Satisfied'
+3='3:Dissatisfied'
+4='4:Very Dissatisfied'
+5='5:No experience'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value yes2fmt
+.='Missing'
+1='1:Yes' 
+2='2:No'
+3='3:No experience'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value dhstfmt
+.='Missing'
+1='1:Kept track of total medicine spending'
+2='2:Info provided by the pharmacy'
+3='3:Info provided by the part D plan'
+91='91:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+ 
+value worry
+.='Missing'
+1='1:Very worried'
+2='2:Somewhat worried'
+3='3:Not at all worried'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value truefmt
+.='Missing'
+1='1:True' 
+2='2:False'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value reason1fmt
+.='Missing'
+1='1:Not serious'
+2='2:Cost too much'
+3='3:Trouble finding doc'
+4='4:Schedule conflict'
+5='5:Doctor could not do much'
+6='6:Afraid of finding out'
+7='7:Insurance not accepted'
+91='91:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value reason2fmt
+.='Missing'
+1='1:Cost too much'
+2='2:Would not help'
+3='3:Afraid of reaction'
+4='4:Do not like to take'
+5='5:Not necessary'
+6='6:Not covered'
+7='7:Trouble obtaining'
+8='8:Used substitution'
+9='9:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value freqfmt
+.='Missing'
+1='1:Often'
+2='2:Sometimes'
+3='3:Never'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value site2fmt
+.='Missing'
+1="1:Doctor’s office group or Doctor’s clinic"
+2='2:Managed care plan center/ HMO'
+3='3:Other clinic (incl neighborhood family health center, rural health center, company clinic, other clinic)'
+4='4:Hospital (incl. walk in urgent care, hospital ER, hospital outpatient, hospital inpatient)'
+5='5:VA facility'
+6='6:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value md2fmt
+.='Missing'
+1='1:Primary Care'
+2='2:Osteopathy' 
+3='3:Cardiology'
+4='4:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value showfmt
+.='Missing'
+1='1:Walking'
+2='2:Driving'
+3='3:Being driven'
+4='4:Ambulance or other special vehicle'
+5='5:Taxi'
+6='6:Other public transportation'
+7='7:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value minsfmt
+.='Missing'
+1='1:0 to 15 mins'
+2='2:16 to 30 mins'
+3='3:31 to 59 mins'
+4='4:60 to 119 mins'
+5='4:2 hours or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value compnyfmt
+.='Missing'
+0='0:No one accompanies'
+1='1:Spouse'
+2='2:Children'
+3='3:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-5='-5:Never ask again';
+ 
+value time8fmt
+.='Missing'
+1='1:Less than 1 year'
+2='2:1 year to < 3 years'
+3='3:3 years to < 5 years'
+4='4:5 years to < 10 years'
+5='5:10 years or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value agree
+.='Missing'
+1='1:Strongly Agree'
+2='2:Agree'
+3='3:Disagree'
+4='4:Strongly Disagree'
+5='5:No experience'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value mcare
+.='Missing'
+1='1:Part A or Part B only'
+2='2:Part A and Part B'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value mcrhmo
+.='Missing'
+0='0:No entitlement'
+1='1:Survey data only'
+2='2:CMS administrative data only'
+3='3:Both survey and administrative data'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value privat
+.='Missing'
+0='0:No entitlement'
+1='1:Employer-sponsored insurance (ESI)'
+2='2:Self-purchased'
+3='3:Both ESI and self-purchased'
+4='4:Unknown'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value public
+.='Missing'
+0='0:None' 
+1='1:One or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value source
+.='Missing'
+0='0:No entitlement'
+1='1:Survey data only'
+2='2:CMS administrative data only'
+3='3:Both survey and administrative data'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ins1type
+.='Missing'
+0='0:Other government program'
+1='1:General insurance'
+2='2:Dental only'
+3='3:Vision only'
+4='4:LTC'
+5='5:Rx only'
+6='6:Dental/Vision'
+7='7:Life insurance'
+8='8:Cancer/Dread disease'
+9='9:Military/Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+
+value hmofmt
+.='Missing'
+0='0:No enrollment' 
+1='1:Some enrollment'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hmocur
+.='Missing'
+1='1:Currently enrolled' 
+2='2:Not currently enrolled'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ins2type
+.='Missing'
+1='1:Medicare'
+2='2:Medicaid'
+3='3:Public plan'
+4='4:Private plan'
+5='5:Medicare Advantage'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value covnum
+.='Missing'
+1='1:One person'
+2='2:Two persons'
+3='3:More than two persons'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value privnum
+.='Missing'
+0='0:No private plan'
+1='1:One private plan'
+2='2:Two private plans'
+3='3:Three or more private plans'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hhtot
+.='Missing'
+1='1:One'
+2='2:Two'
+3='3:Three'
+4='4:Four'
+5='5:Five'
+6='6:Six or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hh2tot
+.='Missing'
+0='0:No one'
+1='1:One'
+2='2:Two'
+3='3:Three or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hhcomp
+.='Missing'
+1='1:No one'
+2='2:Spouse only'
+3='3:Spouse & others'
+4='4:Children only'
+5='5:Children & others'
+6='6:Others only'
+7='7:Non relative'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hhlt
+.='Missing'
+0='0:No one'
+1='1:One'
+2='2:Two'
+3='3:Three'
+4='4:Four or more'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value dwelfmt
+.='Missing'
+1='1:Single family home (one-family detached)'
+2='2:Multi family dwelling (two-family or duplex, mother in law apartment)'
+3='3:Apartment or condominium building/ row house or town house'
+4='4:Mobile home or trailer'
+5='5:Other'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value levelfmt
+.='Missing'
+1='1:One level'
+2='2:Two levels'
+3='3:Three or more levels'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'
+-1="-1: Inapplicable" ;
+
+value servfmt
+.='Missing'
+1='1:All included'
+2='2:Some included/some separate'
+3='3:All separate'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value roomnum
+.='Missing'
+1='1:One or two rooms' 
+2='2:Three rooms'
+3='3:Four rooms'
+4='4:Five rooms'
+5='5:Six rooms'
+6='6:Seven rooms'
+7='7:Eight rooms'
+8='8:Nine or more rooms'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value lang
+.='Missing'
+1='1:English'
+2='2:Spanish';
+
+value proxy 
+.='Missing'
+1='1:Self'
+2='2:Proxy'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value medstafmt
+.='Missing'
+1='1:Aged'
+2='2:Disabled'
+3='3:Unknown'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value metro 
+.='Missing'
+1='1:Metro area'
+2='2:Non-metro area';
+
+value pdrsfmt
+.='Missing'
+1='1:Subsidized full year'
+2='2:Not subsidized'
+3='3:Subsidized part year'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained'; 
+
+value ipstyfmt 
+.='Missing'
+0='0:No stay' 
+1='1:One stay' 
+2='2:Two stays'
+3='3:Three stays'
+4='4:Four or more stays'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ipsty2fmt 
+.='Missing'
+0='0:No visit' 
+1='1:One or more visit'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value snfdayfmt
+.='Missing'
+0='0:0 day covered'
+1='1:1 day or more covered'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ipdayfmt
+.='Missing'
+0='0:0 day'
+1='1:1 day'
+2='2:2 days'
+3='3:3 days' 
+4='4:4 days'
+5='5: 5 or more days'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ipday2fmt 
+.='Missing' 
+0='0:0 day'
+1='1:1 day'
+2='2:More than 1 day'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+                              
+value otbillfmt
+.='Missing'
+0='0:No outpatient bill'
+1='1:1 to 9 bills'
+2='2:10 or more bills'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value phyclm    
+.='Missing' 
+0='0:No physician claim'
+1='1:1 to 9 claims'
+2='2:10 to 49 claims'
+3='3:50 or more claims'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value phylin 
+.='Missing'
+0='0:No physician'
+1='1:1 to 9 physicians'
+2='2:10 to 99 physicians'
+3='3:100 or more physicians'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value phyvist     
+.='Missing' 
+0='0:No office visit'
+1='1:1 to 5 office visits'
+2='2:6 to 10 office visits'
+3='3:11 to 15 office visits'
+4='4:16 to 20 office visits'
+5='5:21 or more office visits'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value numclm
+.='Missing'
+0='0:0 claims' 
+1='1:1 to 9 claims' 
+2='2:10 or more claims'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value numitem
+.='Missing'
+0='0:0 items'
+1='1:1 to 9 items'
+2='2:10 or more items'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value opmdcd
+.='Missing'
+1='1:Nondual'
+2='2:Full dual'
+3='3:Partial dual'
+4='4:QMB dual';
+
+value dualfmt
+.='Missing'
+1='1:Non dual'
+2='2:Part year dual'
+3='3:Full year dual'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value ffsfmt
+.='Missing'
+1='1:No FFS'
+2='2:Part year FFS'
+3='3:Full year FFS'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value mafmt
+.='Missing'
+1='1:No MA'
+2='2:Part year MA'
+3='3:Full year MA'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value acofmt
+.='Missing'
+1='1:Shared Savings Program ACO'
+2='2:Not assigned to an ACO'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value premfmt
+.='Missing'
+1='1:No premium subsidy'
+2='2:Part year premium subsidy'
+3='3:Full year premium subsidy'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value prem2fmt
+.='Missing'
+1='1:No premium subsidy'
+2='2:Not full year 100% premium subsidy'
+3='3:Full year 100% premium subsidy'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value hmoyrfmt 
+.='Missing'
+1='1:less than 1 year'
+2='2:1-2 years'
+3='3:3 to 5 years'
+4='4:6 to 10 years'
+5='5:11 or more years'
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value refdif
+.='Missing'
+1='1:Yes'
+2='2:No'
+3="3:N/A - haven't tried to obtain referral"
+-7='-7:Refused'
+-8="-8:Don't know"
+-9='-9:Not ascertained';
+
+value opdf
+1="1:OPD visit"
+2="2:No OPD visit";
+
+value mdf
+1="1:MD visit"
+2="2:No MD visit";
+
+value impf 
+1="1: Imputed"
+2="2: Not imputed";
+
+RUN;
+ 
+/***************************************************************************                                                                                                                                                                                                   
+Below is an example of how to use the SAS formats defined by the PROC FORMAT                        
+procedure:                                                                                          
+****************************************************************************/                                                                                                    
+                                                             
+OPTIONS FMTSEARCH=(PUFLIB PUFLIB.FORMATS);
+
+DATA ATCPUF13;
+SET PUFLIB.ATCPUF13;                                                                                                                                                                     
+
+FORMAT
+IV_AGE            age2grp.
+IV_RACE           race.
+IV_SEX            sex.
+D_RE_AGE          ivcore.
+D_ARMED           yesfmt.
+D_INCOME          income.
+D_INC_IMP         impf.
+D_EDU             edu.
+D_MARSTA          marsta.
+HLT_GENHELTH      genhfmt.
+HLT_COMPHLTH      compfmt.
+HLT_HELMTACT      timefmt.
+HLT_ECHELP        yesfmt.
+HLT_ECTROUB       lookfmt.
+HLT_EDOCEXAM      yesfmt.
+HLT_EDOCTYPE      edofmt.
+HLT_EDOCDLAT      yesfmt.
+HLT_ECATARAC      yesfmt.
+HLT_EGLAUCOM      yesfmt.
+HLT_ERETINOP      yesfmt.
+HLT_EMACULAR      yesfmt.
+HLT_ECCATOP       yesfmt.
+HLT_ELASRSUR      yesfmt.
+HLT_HCHELP        yesfmt.
+HLT_HCTROUB       hcfmt.
+HLT_HCKNOWMC      hcfmt.
+HLT_HCCOMDOC      hcfmt.  
+HLT_FOODTRBL      hcfmt. 
+HLT_BMI_CAT       bmifmt.
+HLT_BPTAKEN       time2fmt.
+HLT_MAMMOGRM      yesfmt.
+HLT_PAPSMEAR      yesfmt.
+HLT_HYSTEREC      yesfmt.
+HLT_DIGTEXAM      yesfmt.
+HLT_BLOODTST      yesfmt.
+HLT_FLUSHOT       yesfmt.
+HLT_FLUSITE       sitefmt.
+HLT_VACPAID       yesfmt.
+HLT_PNEUSHOT      yesfmt.
+HLT_EVERSMOK      yesfmt.
+HLT_SMOKNOW       yesfmt.
+HLT_DRQTSMOK      yesfmt.
+HLT_DIFSTOOP      difffmt.
+HLT_DIFLIFT       difffmt.
+HLT_DIFREACH      difffmt.
+HLT_DIFWRITE      difffmt.
+HLT_DIFWALK       difffmt.
+HLT_OCARTERY      yesfmt.
+HLT_OCHBP         yesfmt. 
+HLT_D_HBP         yesfmt.
+HLT_HYPETOLD      hypetf. 
+HLT_OCMYOCAR      yesfmt. 
+HLT_D_MYOCAR      yesfmt. 
+HLT_OCCHD         yesfmt. 
+HLT_D_CHD         yesfmt. 
+HLT_OCOTHHRT      yesfmt. 
+HLT_D_OTHHRT      yesfmt. 
+HLT_OCCFAIL       yesfmt.
+HLT_D_CFAIL       yesfmt. 
+HLT_OCCVALVE      yesfmt. 
+HLT_D_VALVE       yesfmt.
+HLT_OCRHYTHM      yesfmt.
+HLT_D_RHYTHM      yesfmt.
+HLT_OCSTROKE      yesfmt. 
+HLT_D_STROKE      yesfmt. 
+HLT_CANCER        yesfmt. 
+HLT_OCCANCER      yesfmt.
+HLT_OCCSKIN       yesfmt. 
+HLT_D_CSKIN       yesfmt.
+HLT_OCBETES       yesfmt. 
+HLT_OCDVISIT      yesfmt. 
+HLT_OCARTHRH      yesfmt. 
+HLT_OCARTH        yesfmt. 
+HLT_D_ARTHRD      yesfmt. 
+HLT_ALZDEM        yesfmt. 
+HLT_OCDEPRSS      yesfmt. 
+HLT_D_DEPRSS      yesfmt. 
+HLT_D_MENDIS      yesfmt. 
+HLT_MENDIS        yesfmt.
+HLT_OCOSTEOP      yesfmt. 
+HLT_OCBRKHIP      yesfmt. 
+HLT_D_PPARAL      yesfmt. 
+HLT_HAVEPROS      yesfmt. 
+HLT_D_PROST       yesfmt. 
+HLT_OCCHOLES      yesfmt. 
+HLT_D_CHOLES      yesfmt. 
+HLT_FUNC_LIM      funlmtfmt.
+HLT_D_ADLHNM      adlhnm.
+HLT_MEMLOSS       yesfmt.
+HLT_PROBDECS      yesfmt. 
+HLT_TROBCONC      yesfmt. 
+HLT_TIMESAD       time3fmt.
+HLT_LOSTINTR      yesfmt. 
+HLT_LOSTURIN      yesfmt.
+HLT_TALKURIN      yesfmt.
+HLT_REASURIN      yesfmt. 
+HLT_SURGURIN      yesfmt. 
+HLT_FALLANY       yesfmt. 
+HLT_FALLTIME      felltimefmt.
+HLT_EDOCLAST      lastfmt.
+HLT_PROSSURG      yesfmt. 
+HLT_OCDTYPE       diafmt.
+HLT_OCEMPHYS      yesfmt. 
+HLT_OCPPARAL      yesfmt.
+HLT_BCTAKEN       time4fmt.
+HLT_OCPARKIN      yesfmt.
+PRV_DIDSMOKE      smktime.
+PRV_LASTSMOK      smktime2f.
+PRV_HAVSMOKE      smktime.
+PRV_QUITSMOK      smkquit.
+PRV_DRINKDAY      drinkday.
+PRV_DRINKSPD      drinkspd.
+PRV_FOURDRNK      drink2day.
+PRV_D_VIGTIM      hracta.
+PRV_D_MODTIM      hractb.
+PRV_D_MUSTIM      hractc.      
+PRV_HYPEYRS       time5fmt.
+PRV_HYPEHOME      yesfmt.
+PRV_HYPEDRNK      yesfmt. 
+PRV_HYPEMEDS      yesfmt. 
+PRV_HYPELONG      time6fmt.
+PRV_HYPEPAY       yesfmt. 
+PRV_HYPESKIP      yesfmt. 
+PRV_HYPECOND      yesfmt. 
+PRV_HYPECTRL      ctrlfmt.
+PRV_FALLHELP      yesfmt. 
+PRV_FALLIMIT      yesfmt. 
+PRV_FALLBACK      time7fmt.
+PRV_FALLFEAR      fallscale.
+PRV_FALNOINJ      yesfmt.
+PRV_FALFRACT      yesfmt.
+PRV_FALSPRAN      yesfmt. 
+PRV_FALBRUIS      yesfmt.
+PRV_FALCUT        yesfmt. 
+PRV_FALOTHER      yesfmt.
+ACC_OPDMCOND      yesfmt.
+ACC_OPDTESTS      yesfmt.
+ACC_OPDFOLUP      yesfmt.
+ACC_OPDCHKUP      yesfmt.
+ACC_OPDRFRL       yesfmt.
+ACC_OPDSURGY      yesfmt.
+ACC_OPDPSHOT      yesfmt.
+ACC_OPDTSHOT      yesfmt.
+ACC_OPDPMED       yesfmt.
+ACC_OPDOTHER      yesfmt.
+ACC_OPDAPPT       apptfmt.
+ACC_OPDDRTEL      opdtelfmt.
+ACC_D_OPAPPT      appttime.
+ACC_D_OPTIME      opttime.
+ACC_MDSPCLTY      mdfmt.
+ACC_MDAPPT        apptfmt.
+ACC_MDDRTEL       opdtelfmt.
+ACC_D_MDAPPT      appt2time.
+ACC_HCTROUBL      yesfmt. 
+ACC_HCDELAY       yesfmt. 
+ACC_MCQUALTY      satffmt.
+ACC_MCAVAIL       satffmt.
+ACC_MCEASE        satffmt.
+ACC_MCCOSTS       satffmt.
+ACC_MCINFO        satffmt.
+ACC_MCFOLUP       satffmt.
+ACC_MCCONCRN      satffmt.
+ACC_MCSAMLOC      satffmt.
+ACC_MCSPECAR      satffmt.
+ACC_MCTELANS      satffmt.
+ACC_MCAMTPAY      satffmt.
+ACC_MCDRGLST      satffmt.
+ACC_MCFNDPCY      satffmt.
+ACC_MCRECPLN      yes2fmt.
+ACC_DHEVHEAR      yesfmt. 
+ACC_DHPLAN        yesfmt. 
+ACC_DHTHISYR      yesfmt. 
+ACC_DHSTART       dhstfmt.
+ACC_DHEND         yesfmt. 
+ACC_DHWORRY       worry.
+ACC_MCDISSFY      yesfmt.
+ACC_MCWORRY       truefmt.
+ACC_MCAVOID       truefmt.
+ACC_MCSICK        truefmt.
+ACC_MCDRSOON      truefmt.
+ACC_MCDRNSEE      truefmt.
+ACC_MCDRATMP      yesfmt. 
+ACC_SCRMAIN       reason1fmt.
+ACC_PMNOTGET      yesfmt. 
+ACC_GENERRX       freqfmt.
+ACC_MAILRX        freqfmt.
+ACC_DOSESRX       freqfmt.
+ACC_SKIPRX        freqfmt.
+ACC_DELAYRX       freqfmt.
+ACC_SAMPLERX      freqfmt.
+ACC_COMPARRX      freqfmt.
+ACC_NOFILLRX      freqfmt.
+ACC_SPENTLRX      freqfmt.
+ACC_CHAINRX       freqfmt.
+ACC_STOPRX        freqfmt.
+ACC_CREDRX        freqfmt.
+ACC_NOINSRX       freqfmt.
+ACC_PLACEPAR      yesfmt.
+ACC_PLACEMCP      yesfmt. 
+ACC_USUALDOC      yesfmt. 
+ACC_MDSPEC        md2fmt.
+ACC_GETUSHOW      showfmt.
+ACC_D_GETUS       minsfmt.
+ACC_ACCOMPUS      yesfmt. 
+ACC_D_ACCREL      compnyfmt.
+ACC_USHOWLNG      time8fmt.
+ACC_PREVMEDC      yesfmt. 
+ACC_USCOMPET      agree.
+ACC_USUNHIST      agree.
+ACC_USUNWRNG      agree.
+ACC_USHURRY       agree.
+ACC_USEXPPRB      agree.
+ACC_USDISCUS      agree.
+ACC_USFAVOR       agree.
+ACC_USTELALL      agree.
+ACC_USANSQUX      agree.
+ACC_USCONFID      agree.
+ACC_USDEPEND      agree.
+ACC_NUSNOTSK      yesfmt. 
+ACC_NUSMOVIN      yesfmt. 
+ACC_NUSAVAIL      yesfmt. 
+ACC_NUSDIFFP      yesfmt.
+ACC_NUSTOOFR      yesfmt. 
+ACC_NUSTOOEX      yesfmt. 
+ACC_D_MDTIME      mdtime.
+ACC_PLACEKND      site2fmt.
+ACC_USCKEVRY      agree.
+ACC_MDMCOND       yesfmt.
+ACC_MDTESTS       yesfmt. 
+ACC_MDFOLUP       yesfmt. 
+ACC_MDCHKUP       yesfmt. 
+ACC_MDRFRL        yesfmt. 
+ACC_MDSURGY       yesfmt. 
+ACC_MDPSHOT       yesfmt.
+ACC_MDTSHOT       yesfmt. 
+ACC_MDPMED        yesfmt. 
+ACC_MDOTHER       yesfmt. 
+ACC_ACCWRITE      yesfmt. 
+ACC_ACCEXPDR      yesfmt. 
+ACC_ACCEXPSP      yesfmt. 
+ACC_ACCASKQS      yesfmt.
+ACC_ACCTRANS      yesfmt.
+ACC_ACCAPPTS      yesfmt. 
+ACC_ACCMORAL      yesfmt. 
+ACC_ACCDRIVE      yesfmt. 
+ACC_ACCHELP       yesfmt. 
+ACC_ACCOTHER      yesfmt.
+INS_D_MCARE       mcare.
+INS_D_MCRHMO      mcrhmo.
+INS_D_PRIVAT      privat.
+INS_D_PUBLIC      public.
+INS_D_MCAID       source. 
+INS_PART_D        yesfmt. 
+INS_MCAIDHMO      yesfmt.
+INS_PUBRXCOV      yesfmt. 
+INS_MTFCOVER      yesfmt. 
+INS_D_HMOCOV      hmofmt.
+INS_D_HMOCUR      hmocur.
+INS_MHMORX        yesfmt.
+INS_MHMODENT      yesfmt. 
+INS_MHMOEYE       yesfmt. 
+INS_MHMONH        yesfmt. 
+INS_MHMOPAY       yesfmt.
+INS_D_PRIVNUM     yesfmt. 
+INS_D_PRIVNUMC    privnum.
+INS_PUBRX         yesfmt.
+INS_PUBGEN        yesfmt. 
+INS_PRIVRX        yesfmt. 
+INS_PRIVLTC       yesfmt.
+INS_PRIVIP        yesfmt. 
+INS_PRIVMDLAB     yesfmt. 
+INS_PRIVGEN       yesfmt. 
+INS_PRIVVIS       yesfmt.
+INS_PRIVDS        yesfmt. 
+HOU_D_HHTOT       hhtot.
+HOU_D_HHREL       hhtot.
+HOU_D_HHUNRL      hh2tot.
+HOU_D_HHCOMP      hhcomp.
+HOU_D_HHLT50      hhlt.
+HOU_D_HHGE50      hhlt.
+HOU_DWELLING      dwelfmt.
+HOU_HLEVELS       levelfmt.
+HOU_HELEVTR       yesfmt.
+HOU_HONELEVL      yesfmt. 
+HOU_HBTHLEVL      yesfmt.
+HOU_HRAMPS        yesfmt.
+HOU_HBATHRM       yesfmt. 
+HOU_HRAILING      yesfmt. 
+HOU_HOUSTYPE      yesfmt. 
+HOU_HPERCARE      yesfmt. 
+HOU_MEALPROB      yesfmt. 
+HOU_MAIDPROB      yesfmt. 
+HOU_WASHPROB      yesfmt. 
+HOU_HELPPROB      yesfmt. 
+HOU_TRANPROB      yesfmt. 
+HOU_RECPROB       yesfmt.
+HOU_SERVINCL      servfmt.
+HOU_STAYPUT       yesfmt.
+HOU_CAREPART      yesfmt.
+HOU_REQAGE        yesfmt. 
+HOU_PERSBATH      yesfmt.
+HOU_PERKITCH      yesfmt. 
+HOU_OUTSTATE      yesfmt.
+HOU_D_HHLT18      hhlt.
+HOU_NBRROOMS      roomnum.
+INT_LANG          lang.
+INT_PROXY         proxy.
+INT_PNSPLAN       yesfmt.
+INT_PNSPNAM       yesfmt.
+INT_PNSPNAP       yesfmt.
+INT_PNSPNOK       yesfmt.
+INT_PNSPUNA       yesfmt.
+INT_PNSPOTHER     yesfmt.
+INT_RRECHELP      yesfmt. 
+ADM_H_ENT         mcare.
+ADM_H_MEDSTA      medstafmt.
+ADM_H_METRO       metro.
+ADM_H_GHPSW       yesfmt.
+ADM_H_PDRS        pdrsfmt.
+ADM_H_CRED        yesfmt. 
+ADM_H_HOSSW       yesfmt.
+ADM_H_INPSW       yesfmt.
+ADM_H_SNFSW       yesfmt.
+ADM_H_HHASW       yesfmt.
+ADM_H_OUTSW       yesfmt.
+ADM_H_PBSW        yesfmt. 	
+ADM_H_INPSTY      ipstyfmt.
+ADM_H_INPDAY      ipdayfmt.
+ADM_H_SNFSTY      ipstyfmt.
+ADM_H_SNFDAY      snfdayfmt.
+ADM_H_HHAVST      ipsty2fmt.
+ADM_H_OUTBIL      otbillfmt.
+ADM_H_PHYCLM      phyclm.
+ADM_H_PHYLIN      phylin.
+ADM_H_PMTVST      phyvist.
+ADM_H_DMECLM      numclm.
+ADM_H_DMELIN      numitem.
+ADM_OP_MDCD       opmdcd.
+ADM_DUAL_FLAG_YR  dualfmt.
+ADM_PARTD         yesfmt. 
+ADM_ACOFLAG       acofmt.
+ADM_FFS_FLAG_YR   ffsfmt.
+ADM_MA_FLAG_YR    mafmt.
+ADM_LIS_FLAG_YR   premfmt.
+ADM_PREM_AMT_YR   prem2fmt.
+MA_MAYEARS        hmoyrfmt.
+MA_MHREFDIF       refdif. 
+MA_MHREFPAY       yesfmt. 
+MA_MHMORX         yesfmt. 
+MA_MHMODENT       yesfmt. 
+MA_MHMOEYE        yesfmt. 
+MA_MHMONH         yesfmt. 
+MA_MHMOPAY        yesfmt. 
+MA_RECMHMO        yesfmt. 
+ACC_OPDFLAG       opdf.
+ACC_MDFLAG	  mdf.;
+RUN;
+
+/*********************************************************************************                                                                                              
+C. Optional Label-related SAS Statements:  
+
+If a user creates a SAS dataset PUFLIB.ATCPUF13 by importing the csv and wants to 
+add labels to the dataset, below is a SAS program that will accomplish this:      
+                                                                                                                              
+*******************************************************************************/ 
+DATA ATCPUF13;
+SET PUFLIB.ATCPUF13;
+label
+PUF_ID="PUF Identification Number" 
+SVYYR="Survey year" 
+IV_AGE="Age group" 
+IV_SEX="Gender" 
+IV_RACE="Race/ethnicity group" 
+D_RE_AGE="Race/ethnicity age group" 
+D_ARMED="Ever served in armed forces" 
+D_INCOME="Income group" 
+D_INC_IMP="Income imputed" 
+D_EDU="Highest grade completed" 
+D_MARSTA="Marital status" 
+HLT_GENHELTH="General hlth compared to others same age" 
+HLT_COMPHLTH="Health compared to last year" 
+HLT_HELMTACT="Health limit activity in past month" 
+HLT_ECHELP="Wear eyeglasses/contact lenses" 
+HLT_ECTROUB="Description of vision" 
+HLT_EDOCEXAM="Eye exam with eye doctor in past year" 
+HLT_EDOCLAST="Years since last exam by eye doctor" 
+HLT_EDOCTYPE="Eye care professional for last exam" 
+HLT_EDOCDLAT="Eye doctor dilate eyes" 
+HLT_ECATARAC="Ever told had cataracts" 
+HLT_EGLAUCOM="Ever told had glaucoma" 
+HLT_ERETINOP="Ever told diabetic retinopathy" 
+HLT_EMACULAR="Ever told macular degeneration" 
+HLT_ECCATOP="Ever had operation for cataracts" 
+HLT_ELASRSUR="Ever had laser eye surgery" 
+HLT_HCHELP="Use hearing aid" 
+HLT_HCTROUB="Description of hearing" 
+HLT_HCKNOWMC="Difficult to find MDCR info b/c hearing" 
+HLT_HCCOMDOC="Trouble communicating w/doc due to hear" 
+HLT_FOODTRBL="Difficulty eating solid foods" 
+HLT_BMI_CAT="Body mass index (BMI) categories kg/m^2" 
+HLT_BPTAKEN="Most recent time blood pressure taken" 
+HLT_MAMMOGRM="Mammogram/breast X-ray within last 4 yrs" 
+HLT_PAPSMEAR="Pap smear within last 4 years" 
+HLT_HYSTEREC="Ever had hysterectomy" 
+HLT_PROSSURG="Had prostate surgery in last year" 
+HLT_DIGTEXAM="Dig rectal prostate exam w/in last 4 yrs" 
+HLT_BLOODTST="Bld test prost cancer w/in last 4 yrs" 
+HLT_FLUSHOT="Flu shot last winter" 
+HLT_FLUSITE="Place last flu shot administered" 
+HLT_VACPAID="Paid some or all the cost of flu shot" 
+HLT_PNEUSHOT="Ever receive shot for pneumonia" 
+HLT_EVERSMOK="Ever smoked cigarettes/cigars/tobacco" 
+HLT_SMOKNOW="Currently smoke cigarettes" 
+HLT_DRQTSMOK="Doctor advised to quit smoking" 
+HLT_DIFSTOOP="Lvl of difficulty stoop/crouching/kneel" 
+HLT_DIFLIFT="Lvl of difficulty lift/carry 10 pounds" 
+HLT_DIFREACH="Lvl difficult extend arms above shoulder" 
+HLT_DIFWRITE="Lvl of difficulty write/handle object" 
+HLT_DIFWALK="Lvl difficult walk 1/4 mile or 2-3 block" 
+HLT_OCARTERY="Ever told had hardening of arteries" 
+HLT_OCHBP="Ever told hypertension/high bld pressure" 
+HLT_D_HBP="High blood pressure since last year" 
+HLT_HYPETOLD="Told 2 or more times high blood pressure" 
+HLT_OCMYOCAR="Ever told MI/heart attck" 
+HLT_D_MYOCAR="Myocardial infarction/hrt attack last yr" 
+HLT_OCCHD="Ever told angina pectoris/CHD" 
+HLT_D_CHD="Coronary heart disease since last year" 
+HLT_OCOTHHRT="Ever told had other heart conditions" 
+HLT_D_OTHHRT="Other heart condition since last year" 
+HLT_OCCFAIL="Ever told had heart failure" 
+HLT_D_CFAIL="Had heart failure since last year" 
+HLT_OCCVALVE="Ever told had problems with valves" 
+HLT_D_VALVE="Had problems with valves since last year" 
+HLT_OCRHYTHM="Ever told had problems with heart rhythm" 
+HLT_D_RHYTHM="Problem with heart rhythm since last yr" 
+HLT_OCSTROKE="Ever told had stroke/brain hemorrhage" 
+HLT_D_STROKE="Stroke/brain hemorrhage since last year" 
+HLT_CANCER="Had any cancer since last year" 
+HLT_OCCANCER="Ever told had (non-skin) cancer" 
+HLT_OCCSKIN="Ever told had skin cancer" 
+HLT_D_CSKIN="Had skin cancer since last year" 
+HLT_OCBETES="Ever told had diabetes" 
+HLT_OCDTYPE="Type of diabetes diagnosed" 
+HLT_OCDVISIT="Ever told on 2+ visits had diabetes" 
+HLT_OCARTHRH="Ever told had rheumatoid arthritis" 
+HLT_OCARTH="Ever told had non-rheumatoid arthritis" 
+HLT_D_ARTHRD="Non-rheumatoid arthritis since lst yr" 
+HLT_ALZDEM="Ever told Alzheimer's or dx of dementia" 
+HLT_OCDEPRSS="Ever told had depression" 
+HLT_D_DEPRSS="Had depression since last year" 
+HLT_D_MENDIS="Had mental disorder since last year" 
+HLT_MENDIS="Ever told had mental disorder" 
+HLT_OCOSTEOP="Ever told had osteoporosis/soft bones" 
+HLT_OCBRKHIP="Ever told had broken hip" 
+HLT_OCEMPHYS="Ever told had emphysema/asthma/COPD" 
+HLT_OCPPARAL="Ever told had complete/partial paralysis" 
+HLT_D_PPARAL="Had paralysis since last year" 
+HLT_HAVEPROS="Ever told enlarged prostate/BPH" 
+HLT_D_PROST="Had prostate problems since last year" 
+HLT_OCCHOLES="Ever been told you had high cholesterol" 
+HLT_D_CHOLES="Had high cholesterol since last year" 
+HLT_FUNC_LIM="Functional limitations: IADLs and ADLs" 
+HLT_D_ADLHNM="Number of ADL helpers" 
+HLT_MEMLOSS="Memory loss interferes w/daily activity" 
+HLT_PROBDECS="Prbls w/make decisions interferes w/ADLs" 
+HLT_TROBCONC="Ever has trouble concentrating" 
+HLT_TIMESAD="Time depressed in the last 12 months" 
+HLT_LOSTINTR="Lost interest the last 12 months" 
+HLT_LOSTURIN="Lost urine control the last 12 months" 
+HLT_TALKURIN="Ever talk to doctor about prob w/urine" 
+HLT_REASURIN="Had medical exam determine prob w/urine" 
+HLT_SURGURIN="Doc talked about meds/surgery with urine" 
+HLT_FALLANY="Ever fall since last year" 
+HLT_FALLTIME="Number of times fall since last year" 
+HLT_BCTAKEN="Last time blood cholesterol taken" 
+HLT_OCPARKIN="Ever told had Parkinson's disease" 
+PRV_DIDSMOKE="Number of years previously smoked" 
+PRV_LASTSMOK="Years since last smoked regularly" 
+PRV_HAVSMOKE="Number of years currently smoked" 
+PRV_QUITSMOK="Quit smoking in the last year" 
+PRV_DRINKDAY="Number of days in a month drinks alcohol" 
+PRV_DRINKSPD="Number of alcoholic drinks per day" 
+PRV_FOURDRNK="Number of days with 4+ drinks/day" 
+PRV_D_VIGTIM="Time spent doing vigorous activity" 
+PRV_D_MODTIM="Time spent doing moderate activities" 
+PRV_D_MUSTIM="Time spent increasing muscle strength" 
+PRV_HYPEYRS="Years since 1st told of hgh bld pressure" 
+PRV_HYPEHOME="Ever measure blood pressure at home" 
+PRV_HYPEDRNK="Due to hi bld pressure reduce alc intake" 
+PRV_HYPEMEDS="Ever take meds for high blood pressure" 
+PRV_HYPELONG="Years taken meds for high blood pressure" 
+PRV_HYPEPAY="Difficulty pay for blood pressure meds" 
+PRV_HYPESKIP="Skip/share bld pressure meds due to cost" 
+PRV_HYPECOND="Trouble with side effects from BP meds" 
+PRV_HYPECTRL="Level confidence control bld pressure" 
+PRV_FALLHELP="Did fall require seeking medical help" 
+PRV_FALLIMIT="Limit activities because of fall" 
+PRV_FALLBACK="Time back to regular activity after fall" 
+PRV_FALLFEAR="Fear of falling scale" 
+PRV_FALNOINJ="Indicated no injury from fall" 
+PRV_FALFRACT="Indicated fracture from fall" 
+PRV_FALSPRAN="Indicated sprain from fall" 
+PRV_FALBRUIS="Indicated bruise from fall" 
+PRV_FALCUT="Indicated cut from fall" 
+PRV_FALOTHER="Indicated other injury from fall" 
+ACC_OPDFLAG="Flag indicates if had OPD visit" 
+ACC_OPDMCOND="Reason for OPD visit: medical condition" 
+ACC_OPDTESTS="Reason for OPD visit: tests" 
+ACC_OPDFOLUP="Reason for OPD visit: follow-up" 
+ACC_OPDCHKUP="Reason for OPD visit: checkup" 
+ACC_OPDRFRL="Reason for OPD visit: referral" 
+ACC_OPDSURGY="Reason for OPD visit: surgery" 
+ACC_OPDPSHOT="Reason for OPD visit: preventative shot" 
+ACC_OPDTSHOT="Reason for OPD visit: treatment shot" 
+ACC_OPDPMED="Reason for OPD visit: medication" 
+ACC_OPDOTHER="Reason for OPD visit: other" 
+ACC_OPDAPPT="OPD visit by appointment or walk-in" 
+ACC_OPDDRTEL="Did someone in OPD tell to come back" 
+ACC_D_OPAPPT="Days waited for OPD appointment" 
+ACC_D_OPTIME="Minutes waited at OPD" 
+ACC_MDSPCLTY="Dr. specialty MD visit-excl in home/hosp" 
+ACC_MDFLAG="Flag indicates if had MD visit" 
+ACC_MDAPPT="Was visit to doc appointment or walkin" 
+ACC_MDDRTEL="Doctor's office ever tell come back" 
+ACC_D_MDAPPT="Days - waited for doctor's appointment" 
+ACC_D_MDTIME="Minutes waited at MD" 
+ACC_HCTROUBL="Ever trouble getting needed health care" 
+ACC_HCDELAY="Last year ever delay in care due to cost" 
+ACC_MCQUALTY="Satisfaction: qual of med care last year" 
+ACC_MCAVAIL="Satisfaction: health care night/wkend" 
+ACC_MCEASE="Satisfaction: ease get to dr from home" 
+ACC_MCCOSTS="Satisfaction: OOP costs for med services" 
+ACC_MCINFO="Satisfaction: info abt what was wrong" 
+ACC_MCFOLUP="Satisfaction: follow up after initial tx" 
+ACC_MCCONCRN="Satisfaction: dr concern w/overall hlth" 
+ACC_MCSAMLOC="Satisfaction: med care at same location" 
+ACC_MCSPECAR="Satisfaction: avail care by specialists" 
+ACC_MCTELANS="Satisfaction: phone answers for tx or RX" 
+ACC_MCAMTPAY="Satisfaction: amt paid for RX drugs" 
+ACC_MCDRGLST="Satisfaction:RX plan list/drugs covered" 
+ACC_MCFNDPCY="Satisfaction: find pharmacy accept RX" 
+ACC_MCRECPLN="Recommend Rx plan to other people" 
+ACC_DHEVHEAR="Ever hear about doughnut hole before" 
+ACC_DHPLAN="MPDP/MHMO have doughnut hole" 
+ACC_DHTHISYR="Start doughnut hole this year" 
+ACC_DHSTART="How found out to start of doughnut hole" 
+ACC_DHEND="Ever reached end of doughnut hole" 
+ACC_DHWORRY="Worry paying RX during doughnut hole" 
+ACC_MCDISSFY="Dissatisfied w/things about med services" 
+ACC_MCWORRY="Worry abt hlth more than others your age" 
+ACC_MCAVOID="Do almost anything to avoid going to doc" 
+ACC_MCSICK="When sick - try keeping sickness to self" 
+ACC_MCDRSOON="Usually go to doctor as soon as feel bad" 
+ACC_MCDRNSEE="Hlth prob thght dr should see but didn't" 
+ACC_MCDRATMP="Attempt to set up dr appt abt condition" 
+ACC_SCRMAIN="Main reason to not see doctor" 
+ACC_PMNOTGET="Were there prescribed meds didn't get" 
+ACC_GENERRX="How often ask for generic form of RX" 
+ACC_MAILRX="How often purchased RX via mail/internet" 
+ACC_DOSESRX="How often took smaller dose of RX" 
+ACC_SKIPRX="How often skipped doses to make RX last" 
+ACC_DELAYRX="How often delayed RX because of cost" 
+ACC_SAMPLERX="How often asked for RX samples from doc" 
+ACC_COMPARRX="How often compared prices for best price" 
+ACC_NOFILLRX="How often not get RX because of cost" 
+ACC_SPENTLRX="How often spent less $ for more $ on RX" 
+ACC_CHAINRX="How often purchased RX through big chain" 
+ACC_STOPRX="How often talk to doctor about stop RX" 
+ACC_CREDRX="How often pay with credit card for RX" 
+ACC_NOINSRX="How often purchase discounted RX w/o ins" 
+ACC_PLACEPAR="Ever go to particular place for med care" 
+ACC_PLACEKND="Kind of place usually go for med care" 
+ACC_PLACEMCP="Doctor/clinic associated with MCP" 
+ACC_USUALDOC="Have particular doctor usually see" 
+ACC_MDSPEC="Doctor specialty: usual source of care" 
+ACC_GETUSHOW="How usually get to doc office" 
+ACC_D_GETUS="Time it usually takes to get doc office" 
+ACC_ACCOMPUS="Does someone accompany to doc office" 
+ACC_D_ACCREL="Who goes with to doctor's office" 
+ACC_USHOWLNG="Years seeing doc/going service to place" 
+ACC_PREVMEDC="Before usual doc ever seen other doc" 
+ACC_USCKEVRY="Doctor checks everything when examining" 
+ACC_USCOMPET="Doctor is competent and well-trained" 
+ACC_USUNHIST="Doc good understanding of med history" 
+ACC_USUNWRNG="Dr completely understands what's wrong" 
+ACC_USHURRY="Doctor seems to be in a hurry" 
+ACC_USEXPPRB="Doctor doesn't explain medical problems" 
+ACC_USDISCUS="Hlth probs shld be discussed but are not" 
+ACC_USFAVOR="Doc acts as if doing a favor by talking" 
+ACC_USTELALL="Doc tells all about med condition/tx" 
+ACC_USANSQUX="Doctor answers all questions" 
+ACC_USCONFID="Have great confidence in doctor" 
+ACC_USDEPEND="Depend on doc to feel better" 
+ACC_NUSNOTSK="No USC: Seldom/never sick" 
+ACC_NUSMOVIN="No USC: Recent move to area" 
+ACC_NUSAVAIL="No USC: USC no longer available" 
+ACC_NUSDIFFP="No USC: Like different place" 
+ACC_NUSTOOFR="No USC: Places are too far away" 
+ACC_NUSTOOEX="No USC: Cost too expensive" 
+ACC_MDMCOND="Reason doc was seen: medical condition" 
+ACC_MDTESTS="Reason doctor seen: tests" 
+ACC_MDFOLUP="Reason doctor seen: follow-up" 
+ACC_MDCHKUP="Reason doctor seen: checkup" 
+ACC_MDRFRL="Reason doctor seen: referral" 
+ACC_MDSURGY="Reason doctor seen: surgery" 
+ACC_MDPSHOT="Reason doctor seen: preventative shot" 
+ACC_MDTSHOT="Reason doctor seen: treatment shot" 
+ACC_MDPMED="Reason doctor seen: medication" 
+ACC_MDOTHER="Reason doctor seen: other" 
+ACC_ACCWRITE="Someone accompanies to take notes" 
+ACC_ACCEXPDR="Someone accompanies explain things to dr" 
+ACC_ACCEXPSP="Someone accompanies explain instructions" 
+ACC_ACCASKQS="Someone accompanies to ask questions" 
+ACC_ACCTRANS="Someone accompanies to translate" 
+ACC_ACCAPPTS="Someone accompanies to schedule appt" 
+ACC_ACCMORAL="Someone accompanies for moral support" 
+ACC_ACCDRIVE="Someone accompanies for transportation" 
+ACC_ACCHELP="Someone accompanies to assist with ADLs" 
+ACC_ACCOTHER="Someone accompanies for other reason" 
+INS_D_MCARE="Type of Medicare coverage" 
+INS_D_MCRHMO="Source of MA enrollment status" 
+INS_D_PRIVAT="Source of private plans" 
+INS_D_PUBLIC="Number of public plans" 
+INS_D_MCAID="Source of Medicaid eligibility status" 
+INS_PART_D="Enrolled in a Part D Plan" 
+INS_PRIVRX="Private plan covers prescription drugs" 
+INS_PUBRX="Public insurances cover Rx" 
+INS_MHMORX="Medicare Advantage plan covers drugs" 
+INS_PUBRXCOV="Public plan covers prescribed meds" 
+INS_MCAIDHMO="Enrolled in a Medicaid HMO" 
+INS_MTFCOVER="Ever recv'd services at military tx fac" 
+INS_D_HMOCOV="Enrolled in Medicare Advantage anytime" 
+INS_D_HMOCUR="Currently enrolled Medicare Advantage" 
+INS_MHMODENT="Medicare Advantage plan covers dental" 
+INS_MHMOEYE="Medicare Advantage plan covers eye exams" 
+INS_MHMONH="MA plan covers nursing home" 
+INS_MHMOPAY="Pay additional for MA coverage" 
+INS_D_PRIVNUM="One or more private plans" 
+INS_D_PRIVNUMC="Number of private plans" 
+INS_PUBGEN="Public insurance covers gen insurance" 
+INS_PRIVLTC="Private plan covers nursing home" 
+INS_PRIVIP="Private plan covers inpatient costs" 
+INS_PRIVMDLAB="Private plan covers MD/LAB visit" 
+INS_PRIVGEN="Private plan covers general insurance" 
+INS_PRIVVIS="Private plan covers vision" 
+INS_PRIVDS="Private plan covers dental" 
+HOU_D_HHTOT="Total number of people in the household" 
+HOU_D_HHREL="People in HH related (include self)" 
+HOU_D_HHUNRL="People in household not related" 
+HOU_D_HHCOMP="Household composition" 
+HOU_D_HHLT50="Number in HH (incl self) < 50 years old" 
+HOU_D_HHGE50="Number in HH (incl self) > 49 years old" 
+HOU_D_HHLT18="Number of relatives in HH under 18" 
+HOU_DWELLING="Description of home" 
+HOU_HLEVELS="Number of levels in home" 
+HOU_HELEVTR="Residence has an elevator" 
+HOU_HONELEVL="Living space is all on one level" 
+HOU_HBTHLEVL="Bathroom on all levels of residence" 
+HOU_HRAMPS="Residence has ramps" 
+HOU_HBATHRM="Bathroom has modifications" 
+HOU_HRAILING="Residence has special railing" 
+HOU_HOUSTYPE="Lives in retirement community" 
+HOU_HPERCARE="Residence offers: personal care" 
+HOU_MEALPROB="Residence offers: prepared meals" 
+HOU_MAIDPROB="Residence offers: cleaning services" 
+HOU_WASHPROB="Residence offers: laundry services" 
+HOU_HELPPROB="Residence offers: help with medication" 
+HOU_TRANPROB="Residence offers: transportation" 
+HOU_RECPROB="Residence offers: recreational services" 
+HOU_SERVINCL="Personal services incl in housing cost" 
+HOU_STAYPUT="If seriously ill, could remain at res" 
+HOU_CAREPART="Substantial care in another part of res" 
+HOU_REQAGE="Residence has required age to live there" 
+HOU_PERSBATH="Residence has own bath facility" 
+HOU_PERKITCH="Residence has own kitchen" 
+HOU_OUTSTATE="Have home in another state" 
+HOU_NBRROOMS="Number of rooms in residence" 
+INT_LANG="Language of interview" 
+INT_PROXY="Self - respondent or proxy" 
+INT_PNSPLAN="Proxy necessary due to language problem" 
+INT_PNSPNAM="Proxy necessary due to mental condition" 
+INT_PNSPNAP="Proxy needed due to physical condition" 
+INT_PNSPNOK="Proxy needed due to med records missing" 
+INT_PNSPUNA="Proxy necessary due to unavailability" 
+INT_PNSPOTHER="Proxy needed due to other reason" 
+INT_RRECHELP="Did respondent receive help answering" 
+ADM_H_ENT="Medicare entitlement code for the year" 
+ADM_H_MEDSTA="Medicare status code as of 12/31" 
+ADM_H_METRO="Metro status" 
+ADM_H_GHPSW="Some group health participation in year" 
+ADM_H_PDRS="RDS Indicator for the year" 
+ADM_H_CRED="Creditable Coverage for the year" 
+ADM_H_HOSSW="One or more hospice bill in current year" 
+ADM_H_INPSW="One or more IP discharges current yr" 
+ADM_H_SNFSW="One or more SNF admissions in current yr" 
+ADM_H_HHASW="One or more HHA visits in current year" 
+ADM_H_OUTSW="One or more OPD visits in current yr" 
+ADM_H_PBSW="One or more Part B claims in current yr" 
+ADM_H_INPSTY="Number of inpatient stays for current yr" 
+ADM_H_INPDAY="Number of IP covered days current yr" 
+ADM_H_SNFSTY="Total SNF stays in current year" 
+ADM_H_SNFDAY="Total SNF covered days in current year" 
+ADM_H_HHAVST="Total HHA visits in current year" 
+ADM_H_OUTBIL="Total outpatient bills in current year" 
+ADM_H_PHYCLM="Total physician claims in current year" 
+ADM_H_PHYLIN="Total physician line items in current yr" 
+ADM_H_PMTVST="Total office visits in current year" 
+ADM_H_DMECLM="Total DME supplier claims in current yr" 
+ADM_H_DMELIN="Total DME supplier line items current yr" 
+ADM_PARTD="Part D plan flag for the year" 
+ADM_DUAL_FLAG_YR="Dual eligibility flag for the year" 
+ADM_OP_MDCD="Medicare-Medicaid dual eligibility" 
+ADM_FFS_FLAG_YR="Fee-for-Service flag for the year" 
+ADM_MA_FLAG_YR="Medicare Advantage flag for the year" 
+ADM_ACOFLAG="Accountable Care Organization (ACO) flag" 
+ADM_LIS_FLAG_YR="Low income subsidy indicator for the yr" 
+ADM_PREM_AMT_YR="Premium subsidy coverage for the year" 
+MA_MAYEARS="Years enrolled in Medicare Advantage" 
+MA_MHREFDIF="Difficulty getting referrals through MA" 
+MA_MHMORX="Medicare Advantage plan cover drugs" 
+MA_MHREFPAY="MA refused to pay emergency care" 
+MA_MHMODENT="Medicare Advantage plan cover dental" 
+MA_MHMOEYE="Medicare Advantage plan cover eye exams" 
+MA_MHMONH="MA plan covers nursing home" 
+MA_MHMOPAY="Ever pay additional for MA coverage" 
+MA_RECMHMO="Recommend MA to family/friends" 
+CS1YRWGT="Cross-sectional full sample weight" 
+CS1YR001="Cross-sectional replicate weight 1" 
+CS1YR002="Cross-sectional replicate weight 2" 
+CS1YR003="Cross-sectional replicate weight 3" 
+CS1YR004="Cross-sectional replicate weight 4" 
+CS1YR005="Cross-sectional replicate weight 5" 
+CS1YR006="Cross-sectional replicate weight 6" 
+CS1YR007="Cross-sectional replicate weight 7" 
+CS1YR008="Cross-sectional replicate weight 8" 
+CS1YR009="Cross-sectional replicate weight 9" 
+CS1YR010="Cross-sectional replicate weight 10" 
+CS1YR011="Cross-sectional replicate weight 11" 
+CS1YR012="Cross-sectional replicate weight 12" 
+CS1YR013="Cross-sectional replicate weight 13" 
+CS1YR014="Cross-sectional replicate weight 14" 
+CS1YR015="Cross-sectional replicate weight 15" 
+CS1YR016="Cross-sectional replicate weight 16" 
+CS1YR017="Cross-sectional replicate weight 17" 
+CS1YR018="Cross-sectional replicate weight 18" 
+CS1YR019="Cross-sectional replicate weight 19" 
+CS1YR020="Cross-sectional replicate weight 20" 
+CS1YR021="Cross-sectional replicate weight 21" 
+CS1YR022="Cross-sectional replicate weight 22" 
+CS1YR023="Cross-sectional replicate weight 23" 
+CS1YR024="Cross-sectional replicate weight 24" 
+CS1YR025="Cross-sectional replicate weight 25" 
+CS1YR026="Cross-sectional replicate weight 26" 
+CS1YR027="Cross-sectional replicate weight 27" 
+CS1YR028="Cross-sectional replicate weight 28" 
+CS1YR029="Cross-sectional replicate weight 29" 
+CS1YR030="Cross-sectional replicate weight 30" 
+CS1YR031="Cross-sectional replicate weight 31" 
+CS1YR032="Cross-sectional replicate weight 32" 
+CS1YR033="Cross-sectional replicate weight 33" 
+CS1YR034="Cross-sectional replicate weight 34" 
+CS1YR035="Cross-sectional replicate weight 35" 
+CS1YR036="Cross-sectional replicate weight 36" 
+CS1YR037="Cross-sectional replicate weight 37" 
+CS1YR038="Cross-sectional replicate weight 38" 
+CS1YR039="Cross-sectional replicate weight 39" 
+CS1YR040="Cross-sectional replicate weight 40" 
+CS1YR041="Cross-sectional replicate weight 41" 
+CS1YR042="Cross-sectional replicate weight 42" 
+CS1YR043="Cross-sectional replicate weight 43" 
+CS1YR044="Cross-sectional replicate weight 44" 
+CS1YR045="Cross-sectional replicate weight 45" 
+CS1YR046="Cross-sectional replicate weight 46" 
+CS1YR047="Cross-sectional replicate weight 47" 
+CS1YR048="Cross-sectional replicate weight 48" 
+CS1YR049="Cross-sectional replicate weight 49" 
+CS1YR050="Cross-sectional replicate weight 50" 
+CS1YR051="Cross-sectional replicate weight 51" 
+CS1YR052="Cross-sectional replicate weight 52" 
+CS1YR053="Cross-sectional replicate weight 53" 
+CS1YR054="Cross-sectional replicate weight 54" 
+CS1YR055="Cross-sectional replicate weight 55" 
+CS1YR056="Cross-sectional replicate weight 56" 
+CS1YR057="Cross-sectional replicate weight 57" 
+CS1YR058="Cross-sectional replicate weight 58" 
+CS1YR059="Cross-sectional replicate weight 59" 
+CS1YR060="Cross-sectional replicate weight 60" 
+CS1YR061="Cross-sectional replicate weight 61" 
+CS1YR062="Cross-sectional replicate weight 62" 
+CS1YR063="Cross-sectional replicate weight 63" 
+CS1YR064="Cross-sectional replicate weight 64" 
+CS1YR065="Cross-sectional replicate weight 65" 
+CS1YR066="Cross-sectional replicate weight 66" 
+CS1YR067="Cross-sectional replicate weight 67" 
+CS1YR068="Cross-sectional replicate weight 68" 
+CS1YR069="Cross-sectional replicate weight 69" 
+CS1YR070="Cross-sectional replicate weight 70" 
+CS1YR071="Cross-sectional replicate weight 71" 
+CS1YR072="Cross-sectional replicate weight 72" 
+CS1YR073="Cross-sectional replicate weight 73" 
+CS1YR074="Cross-sectional replicate weight 74" 
+CS1YR075="Cross-sectional replicate weight 75" 
+CS1YR076="Cross-sectional replicate weight 76" 
+CS1YR077="Cross-sectional replicate weight 77" 
+CS1YR078="Cross-sectional replicate weight 78" 
+CS1YR079="Cross-sectional replicate weight 79" 
+CS1YR080="Cross-sectional replicate weight 80" 
+CS1YR081="Cross-sectional replicate weight 81" 
+CS1YR082="Cross-sectional replicate weight 82" 
+CS1YR083="Cross-sectional replicate weight 83" 
+CS1YR084="Cross-sectional replicate weight 84" 
+CS1YR085="Cross-sectional replicate weight 85" 
+CS1YR086="Cross-sectional replicate weight 86" 
+CS1YR087="Cross-sectional replicate weight 87" 
+CS1YR088="Cross-sectional replicate weight 88" 
+CS1YR089="Cross-sectional replicate weight 89" 
+CS1YR090="Cross-sectional replicate weight 90" 
+CS1YR091="Cross-sectional replicate weight 91" 
+CS1YR092="Cross-sectional replicate weight 92" 
+CS1YR093="Cross-sectional replicate weight 93" 
+CS1YR094="Cross-sectional replicate weight 94" 
+CS1YR095="Cross-sectional replicate weight 95" 
+CS1YR096="Cross-sectional replicate weight 96" 
+CS1YR097="Cross-sectional replicate weight 97" 
+CS1YR098="Cross-sectional replicate weight 98" 
+CS1YR099="Cross-sectional replicate weight 99" 
+CS1YR100="Cross-sectional replicate weight 100" 
+;
+
+RUN;
+
+
+
+
+
+
+
+
+
+
+
+
+     
+    
+    
+    
+     
